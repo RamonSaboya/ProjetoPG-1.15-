@@ -33,8 +33,10 @@ var contadorPontos = 0;
 
 //----------------------------Calculo dos pontos a mais ------------------------------------
 
+	var vtPontos;
+
 function novosPontos(){
-	espessura = 15;//por enquanto a expressura é definida no script
+	espessura = 50;//por enquanto a expressura é definida no script
 
 	vetores = [];
 
@@ -59,24 +61,23 @@ function novosPontos(){
 	}
 	//slice para igualar os extremos e ter a quantidade de pontos intermediários iguais (precisando apenas de alterar)
 
-	var vt;
 
 
 	for(var cont = 0; cont < (vetores.length - 1) ; cont++) {
 
 		if(anguloVetor(vetores[cont + 1], vetores[cont]) != -1){//caso os 3 pontos nao sejam colineares
-			vt = subtraiVetor(vetores[cont + 1], vetores[cont]);
+			vtPontos = subtraiVetor(vetores[cont + 1], vetores[cont]);
 		}else{
-			vt = ortogonal(vetores[cont]);//pode haver confusao, corrigir
+			vtPontos = ortogonal(vetores[cont]);//pode haver confusao, corrigir
 		}
 
-		vt = normalizar(vt);
+		vtPontos = normalizar(vtPontos);
 
-		pointsUp[cont + 1].x = (vt.x * espessura) + points[cont+1].x;
-		pointsUp[cont + 1].y = (vt.y * espessura) + points[cont+1].y;
+		pointsUp[cont + 1].x = (vtPontos.x * espessura) + points[cont+1].x;
+		pointsUp[cont + 1].y = (vtPontos.y * espessura) + points[cont+1].y;
 
-		pointsDown[cont + 1].x = (vt.x * (-espessura)) + points[cont+1].x;
-		pointsDown[cont + 1].x = (vt.y * (-espessura)) + points[cont+1].y;
+		pointsDown[cont + 1].x = (vtPontos.x * (-espessura)) + points[cont+1].x;
+		pointsDown[cont + 1].y = (vtPontos.y * (-espessura)) + points[cont+1].y;
 
 
 	}
