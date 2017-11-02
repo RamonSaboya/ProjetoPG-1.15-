@@ -48,6 +48,10 @@ function novosPontos(){
 
 	}//todos os vetores obtidos
 
+	pointsUp = [];
+	pointsDown = [];
+	//zerando os dois pontos
+	
 	for (var i = 0; i < points.length; i++) {
 		pointsUp.push(points[i]);
 		pointsDown.push(points[i]);
