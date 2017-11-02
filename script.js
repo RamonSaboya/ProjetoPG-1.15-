@@ -1,11 +1,11 @@
-
 var points = [];
-var espessura//por enquanto a expressura é definida no script
 var pointsUp = [];//pontos de Cima
 var pointsDown = [];//pontos de Baixo
 var vetores = [];
+var espessuraDefault = 50;
 var numeroPontos = 0;
 var numeroTestes = 1000;
+var pontoAtual = -1;
 //---------------------Vetor---------------------------------------
 
 	function normalizar(v1){
@@ -37,8 +37,6 @@ var numeroTestes = 1000;
 	var vtPontos;
 
 function novosPontos(){
-	espessura = 50;//por enquanto a expressura é definida no script
-
 	vetores = [];
 
 	for(var cont1 = 0; cont1 < (numeroPontos - 1) ; cont1++){
@@ -75,11 +73,11 @@ function novosPontos(){
 		vtPontos = normalizar(vtPontos);
 
 
-		pointsDown[cont + 1].x = (vtPontos.x * (-espessura)) + points[cont+1].x;
-		pointsDown[cont + 1].y = (vtPontos.y * (-espessura)) + points[cont+1].y;
+		pointsDown[cont + 1].x = (vtPontos.x * (-points[cont+1].e)) + points[cont+1].x;
+		pointsDown[cont + 1].y = (vtPontos.y * (-points[cont+1].e)) + points[cont+1].y;
 
-		pointsUp[cont + 1].x = (vtPontos.x * espessura) + points[cont+1].x;
-		pointsUp[cont + 1].y = (vtPontos.y * espessura) + points[cont+1].y;
+		pointsUp[cont + 1].x = (vtPontos.x * points[cont+1].e) + points[cont+1].x;
+		pointsUp[cont + 1].y = (vtPontos.y * points[cont+1].e) + points[cont+1].y;
 
 
 
@@ -91,6 +89,7 @@ function novosPontos(){
 
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
+var move = false;
 
 
 resizeCanvas();
@@ -102,14 +101,16 @@ function resizeCanvas() {
 
 
 canvas.addEventListener('mousedown', e => {
-  var click = {x: e.offsetX, y: e.offsetY};
+  var click = {x: e.offsetX, y: e.offsetY, e:espessuraDefault};
   index = getIndex(click);
   if (index === -1) {
     numeroPontos = numeroPontos + 1;
     points.push(click);
+    pontoAtual = numeroPontos - 2;
     drawPoints();
   } else {
     move = true;
+    pontoAtual = index;
   }
 
 
@@ -136,7 +137,11 @@ function drawPoints() {
   for (var i in points) {
     ctx.beginPath();
     ctx.arc(points[i].x, points[i].y, 5, 0, 2 * Math.PI);
-    ctx.fillStyle = 'red';
+    if(i != pontoAtual) {
+	    ctx.fillStyle = 'red';
+    } else {
+	    ctx.fillStyle = 'green';
+	}
     ctx.fill();
 
     //ligando os pontos
@@ -276,14 +281,28 @@ function calcularPontosCurva() {
 }
 
 
-
+canvas.addEventListener('keydown', e => {
+  if(pontoAtual != -1 && pontoAtual != 0 && pontoAtual != numeroPontos - 1 && numeroPontos > 2) {
+    switch(e.which) {
+        case 38:
+          points[pontoAtual].e = points[pontoAtual].e + 5;
+          drawPoints();
+        break;
+        case 40:
+          points[pontoAtual].e = points[pontoAtual].e - 5;
+          drawPoints();
+        break;
+        default: return;
+    }
+    e.preventDefault();
+  }
+});
 
 
 canvas.addEventListener('mousemove', e => {
   if(move){
     var antigo = points[index];
-    points[index] = {x: e.offsetX, y: e.offsetY, v:{x:0 , y:0}};
-    points[index].v = {x: e.offsetX - antigo.x, y: e.offsetY - antigo.y}
+    points[index] = {x: e.offsetX, y: e.offsetY, e: antigo.e};
     drawPoints();
   }     
 });
