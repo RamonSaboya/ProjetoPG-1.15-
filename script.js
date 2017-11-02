@@ -4,8 +4,8 @@ var espessura//por enquanto a expressura é definida no script
 var pointsUp = [];//pontos de Cima
 var pointsDown = [];//pontos de Baixo
 var vetores = [];
-var contadorPontos = 0;
-var av = 1000;
+var numeroPontos = 0;
+var numeroTestes = 1000;
 //---------------------Vetor---------------------------------------
 
 	function normalizar(v1){
@@ -41,7 +41,7 @@ function novosPontos(){
 
 	vetores = [];
 
-	for(var cont1 = 0; cont1 < (contadorPontos - 1) ; cont1++){
+	for(var cont1 = 0; cont1 < (numeroPontos - 1) ; cont1++){
 
 		var xt = (points[cont1 + 1].x - points[cont1].x);
 		var yt = (points[cont1 + 1].y - points[cont1].y);
@@ -105,7 +105,7 @@ canvas.addEventListener('mousedown', e => {
   var click = {x: e.offsetX, y: e.offsetY, v:{x: 0, y:0}};
   index = getIndex(click);
   if (index === -1) {
-    contadorPontos = contadorPontos + 1;
+    numeroPontos = numeroPontos + 1;
     points.push(click);
     drawPoints();
   } else {
@@ -149,7 +149,7 @@ function drawPoints() {
     }
   }
 
-  if(contadorPontos > 2) {
+  if(numeroPontos > 2) {
 	  novosPontos();
   
 	  for (var i in pointsUp) {
@@ -171,7 +171,7 @@ function drawPoints() {
 	    //ligando os pontos
 	   
 	  }
-	  calcAvaliable();
+	  calcularPontosCurva();
 
 	}
 }
@@ -184,7 +184,7 @@ setInterval(() => {
 
 
 function drawCurve(pointsCurve) {
-  if(contadorPontos > 2) {
+  if(numeroPontos > 2) {
     for(var i in pointsCurve) {
       ctx.beginPath();
       
@@ -199,7 +199,7 @@ function drawCurve(pointsCurve) {
   }
 }
 
-function casteljauX(array, t, r, i){
+/*function casteljauX(array, t, r, i){
     if(r == 0){
         return array[i].x;
     }
@@ -216,17 +216,25 @@ function casteljauY(array, t, r, i){
         return ((1 - t) * casteljauY(array, t, (r-1), i)) + (t * casteljauY(array, t, (r - 1), i+ 1));
     }
 }
-
-function calcAvaliable() {
+*/
+//fora de uso 
+function calcularPontosCurva() {
   var pointsCurve = [];
   //para cada avaliacao:
   //var t = 1/2;
   var t = 0;
-  for(var cont = 0; cont < av; t = t + 1/av, cont++){
-  	var X = casteljauX(points, t, (contadorPontos - 1), 0);
-  	var Y = casteljauY(points, t, (contadorPontos - 1), 0);
-  	var pontoCurva = {x: X, y: Y};
-  	pointsCurve.push(pontoCurva);
+  for(var cont = 0; cont < numeroTestes; t = t + 1/numeroTestes, cont++){
+  	var pointsDeCasteljau = points.slice(0, numeroPontos + 1);
+    //para cada nivel:
+    for(n = 1; n < numeroPontos; n++) {
+      //para cada ponto:
+      for(p = 0; p < numeroPontos - n; p++) {
+        var cordX = (1 - t) * pointsDeCasteljau[p].x + t * pointsDeCasteljau[p+1].x;
+        var cordY = (1 - t) * pointsDeCasteljau[p].y + t * pointsDeCasteljau[p+1].y;
+        pointsDeCasteljau[p] = {x: cordX, y: cordY};
+      }
+    }
+    pointsCurve.push(pointsDeCasteljau[0]);
   }
   drawCurve(pointsCurve);
 
@@ -235,11 +243,18 @@ function calcAvaliable() {
   //para cada avaliacao:
   //var t = 1/2;
   var t = 0;
-  for(var cont = 0; cont < av; t = t + 1/av, cont++){
-  	var X = casteljauX(pointsUp, t, (contadorPontos - 1), 0);
-  	var Y = casteljauY(pointsUp, t, (contadorPontos - 1), 0);
-  	var pontoCurva = {x: X, y: Y};
-  	pointsCurveUp.push(pontoCurva);
+  for(var cont = 0; cont < numeroTestes; t = t + 1/numeroTestes, cont++){
+  	var pointsDeCasteljau = pointsUp.slice(0, numeroPontos + 1);
+    //para cada nivel:
+    for(n = 1; n < numeroPontos; n++) {
+      //para cada ponto:
+      for(p = 0; p < numeroPontos - n; p++) {
+        var cordX = (1 - t) * pointsDeCasteljau[p].x + t * pointsDeCasteljau[p+1].x;
+        var cordY = (1 - t) * pointsDeCasteljau[p].y + t * pointsDeCasteljau[p+1].y;
+        pointsDeCasteljau[p] = {x: cordX, y: cordY};
+      }
+    }
+    pointsCurveUp.push(pointsDeCasteljau[0]);
   }
   drawCurve(pointsCurveUp);
 
@@ -247,11 +262,18 @@ function calcAvaliable() {
   //para cada avaliacao:
   //var t = 1/2;
   var t = 0;
-  for(var cont = 0; cont < av; t = t + 1/av, cont++){
-  	var X = casteljauX(pointsDown, t, (contadorPontos - 1), 0);
-  	var Y = casteljauY(pointsDown, t, (contadorPontos - 1), 0);
-  	var pontoCurva = {x: X, y: Y};
-  	pointsCurveDown.push(pontoCurva);
+  for(var cont = 0; cont < numeroTestes; t = t + 1/numeroTestes, cont++){
+  	var pointsDeCasteljau = pointsDown.slice(0, numeroPontos + 1);
+    //para cada nivel:
+    for(n = 1; n < numeroPontos; n++) {
+      //para cada ponto:
+      for(p = 0; p < numeroPontos - n; p++) {
+        var cordX = (1 - t) * pointsDeCasteljau[p].x + t * pointsDeCasteljau[p+1].x;
+        var cordY = (1 - t) * pointsDeCasteljau[p].y + t * pointsDeCasteljau[p+1].y;
+        pointsDeCasteljau[p] = {x: cordX, y: cordY};
+      }
+    }
+    pointsCurveDown.push(pointsDeCasteljau[0]);
   }
   drawCurve(pointsCurveDown);
 
