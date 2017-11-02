@@ -53,8 +53,9 @@ function novosPontos(){
 	//zerando os dois pontos
 	
 	for (var i = 0; i < points.length; i++) {
-		pointsUp.push(points[i]);
-		pointsDown.push(points[i]);
+		var coordPointsTemp = { x: points[i].x, y: points[i].y};
+		pointsUp.push(coordPointsTemp);
+		pointsDown.push(coordPointsTemp);
 	}
 	//slice para igualar os extremos e ter a quantidade de pontos intermediários iguais (precisando apenas de alterar)
 
@@ -145,6 +146,27 @@ function drawPoints() {
       ctx.stroke();
     }
   }
+
+  for (var i in pointsUp) {
+    ctx.beginPath();
+    ctx.arc(pointsUp[i].x, pointsUp[i].y, 5, 0, 2 * Math.PI);
+    ctx.fillStyle = 'yellow';
+    ctx.fill();
+
+    //ligando os pontos
+   
+  }
+
+  for (var i in pointsDown) {
+    ctx.beginPath();
+    ctx.arc(pointsDown[i].x, pointsDown[i].y, 5, 0, 2 * Math.PI);
+    ctx.fillStyle = 'black';
+    ctx.fill();
+
+    //ligando os pontos
+   
+  }
+
 }
 
 setInterval(() => {
