@@ -102,7 +102,7 @@ function resizeCanvas() {
 
 
 canvas.addEventListener('mousedown', e => {
-  var click = {x: e.offsetX, y: e.offsetY, v:{x: 0, y:0}};
+  var click = {x: e.offsetX, y: e.offsetY};
   index = getIndex(click);
   if (index === -1) {
     numeroPontos = numeroPontos + 1;
