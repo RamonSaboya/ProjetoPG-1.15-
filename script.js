@@ -133,7 +133,7 @@ function getIndex(click) {
 
 function drawPoints() {
   //desenha todos os pontos
-  for (var i in points) {
+  /*for (var i in points) {
     ctx.beginPath();
     ctx.arc(points[i].x, points[i].y, 5, 0, 2 * Math.PI);
     ctx.fillStyle = 'red';
@@ -148,18 +148,16 @@ function drawPoints() {
       ctx.stroke();
     }
   }
-
+*/
   if(numeroPontos > 2) {
 	  novosPontos();
   
-	  for (var i in pointsUp) {
+	 /* for (var i in pointsUp) {
 	    ctx.beginPath();
 	    ctx.arc(pointsUp[i].x, pointsUp[i].y, 5, 0, 2 * Math.PI);
 	    ctx.fillStyle = 'yellow';
 	    ctx.fill();
 
-	    //ligando os pontos
-	   
 	  }
 
 	  for (var i in pointsDown) {
@@ -168,9 +166,7 @@ function drawPoints() {
 	    ctx.fillStyle = 'black';
 	    ctx.fill();
 
-	    //ligando os pontos
-	   
-	  }
+	  }*/
 	  calcularPontosCurva();
 
 	}
