@@ -5,6 +5,7 @@ var pointsUp = [];//pontos de Cima
 var pointsDown = [];//pontos de Baixo
 var vetores = [];
 var contadorPontos = 0;
+var av = 1000;
 //---------------------Vetor---------------------------------------
 
 	function normalizar(v1){
@@ -56,10 +57,10 @@ function novosPontos(){
 	
 	for (var i = 0; i < points.length; i++) {
 		var coordPointsTemp = { x: points[i].x, y: points[i].y};
+		var coordPointsTemp1 = { x: points[i].x, y: points[i].y};
 		pointsUp.push(coordPointsTemp);
-		pointsDown.push(coordPointsTemp);
+		pointsDown.push(coordPointsTemp1);
 	}
-	//slice para igualar os extremos e ter a quantidade de pontos intermediários iguais (precisando apenas de alterar)
 
 
 
@@ -73,11 +74,13 @@ function novosPontos(){
 
 		vtPontos = normalizar(vtPontos);
 
-		pointsUp[cont + 1].x = (vtPontos.x * espessura) + points[cont+1].x;
-		pointsUp[cont + 1].y = (vtPontos.y * espessura) + points[cont+1].y;
 
 		pointsDown[cont + 1].x = (vtPontos.x * (-espessura)) + points[cont+1].x;
 		pointsDown[cont + 1].y = (vtPontos.y * (-espessura)) + points[cont+1].y;
+
+		pointsUp[cont + 1].x = (vtPontos.x * espessura) + points[cont+1].x;
+		pointsUp[cont + 1].y = (vtPontos.y * espessura) + points[cont+1].y;
+
 
 
 	}
@@ -110,9 +113,7 @@ canvas.addEventListener('mousedown', e => {
   }
 
 
-  if(contadorPontos > 2) {
-    novosPontos();
-  }
+  
 
 });
 
@@ -148,29 +149,127 @@ function drawPoints() {
     }
   }
 
-  for (var i in pointsUp) {
-    ctx.beginPath();
-    ctx.arc(pointsUp[i].x, pointsUp[i].y, 5, 0, 2 * Math.PI);
-    ctx.fillStyle = 'yellow';
-    ctx.fill();
+  if(contadorPontos > 2) {
+	  novosPontos();
+  
+	  for (var i in pointsUp) {
+	    ctx.beginPath();
+	    ctx.arc(pointsUp[i].x, pointsUp[i].y, 5, 0, 2 * Math.PI);
+	    ctx.fillStyle = 'yellow';
+	    ctx.fill();
 
-    //ligando os pontos
-   
-  }
+	    //ligando os pontos
+	   
+	  }
 
-  for (var i in pointsDown) {
-    ctx.beginPath();
-    ctx.arc(pointsDown[i].x, pointsDown[i].y, 5, 0, 2 * Math.PI);
-    ctx.fillStyle = 'black';
-    ctx.fill();
+	  for (var i in pointsDown) {
+	    ctx.beginPath();
+	    ctx.arc(pointsDown[i].x, pointsDown[i].y, 5, 0, 2 * Math.PI);
+	    ctx.fillStyle = 'black';
+	    ctx.fill();
 
-    //ligando os pontos
-   
-  }
+	    //ligando os pontos
+	   
+	  }
+	  calcAvaliable();
 
+	}
 }
 
 setInterval(() => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);//redesenha o canvas
   drawPoints();
 }, 100);
+
+
+
+function drawCurve(pointsCurve) {
+  if(contadorPontos > 2) {
+    for(var i in pointsCurve) {
+      ctx.beginPath();
+      
+      if(i > 0) {
+        var xAtual = pointsCurve[i-1].x;
+        var yAtual = pointsCurve[i-1].y;
+        ctx.moveTo(xAtual, yAtual);
+        ctx.lineTo(pointsCurve[i].x, pointsCurve[i].y);
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function casteljauX(array, t, r, i){
+    if(r == 0){
+        return array[i].x;
+    }
+    else{
+        return ((1 - t) * casteljauX(array, t, (r-1), i)) + (t * casteljauX(array, t, (r - 1), i+ 1));
+    }
+}
+
+function casteljauY(array, t, r, i){
+    if(r == 0){
+        return array[i].y;
+    }
+    else{
+        return ((1 - t) * casteljauY(array, t, (r-1), i)) + (t * casteljauY(array, t, (r - 1), i+ 1));
+    }
+}
+
+function calcAvaliable() {
+  var pointsCurve = [];
+  //para cada avaliacao:
+  //var t = 1/2;
+  var t = 0;
+  for(var cont = 0; cont < av; t = t + 1/av, cont++){
+  	var X = casteljauX(points, t, (contadorPontos - 1), 0);
+  	var Y = casteljauY(points, t, (contadorPontos - 1), 0);
+  	var pontoCurva = {x: X, y: Y};
+  	pointsCurve.push(pontoCurva);
+  }
+  drawCurve(pointsCurve);
+
+
+  var pointsCurveUp = [];
+  //para cada avaliacao:
+  //var t = 1/2;
+  var t = 0;
+  for(var cont = 0; cont < av; t = t + 1/av, cont++){
+  	var X = casteljauX(pointsUp, t, (contadorPontos - 1), 0);
+  	var Y = casteljauY(pointsUp, t, (contadorPontos - 1), 0);
+  	var pontoCurva = {x: X, y: Y};
+  	pointsCurveUp.push(pontoCurva);
+  }
+  drawCurve(pointsCurveUp);
+
+  var pointsCurveDown = [];
+  //para cada avaliacao:
+  //var t = 1/2;
+  var t = 0;
+  for(var cont = 0; cont < av; t = t + 1/av, cont++){
+  	var X = casteljauX(pointsDown, t, (contadorPontos - 1), 0);
+  	var Y = casteljauY(pointsDown, t, (contadorPontos - 1), 0);
+  	var pontoCurva = {x: X, y: Y};
+  	pointsCurveDown.push(pontoCurva);
+  }
+  drawCurve(pointsCurveDown);
+
+}
+
+
+
+
+
+canvas.addEventListener('mousemove', e => {
+  if(move){
+    var antigo = points[index];
+    points[index] = {x: e.offsetX, y: e.offsetY, v:{x:0 , y:0}};
+    points[index].v = {x: e.offsetX - antigo.x, y: e.offsetY - antigo.y}
+    drawPoints();
+  }     
+});
+
+canvas.addEventListener('mouseup', e => {
+  move = false;
+});
